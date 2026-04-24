@@ -1,10 +1,18 @@
 import { VertexAI } from '@google-cloud/vertexai'
 
 export function getVertexClient() {
+  const credentials = JSON.parse(
+    Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64!, 'base64').toString('utf-8')
+  )
+
   const vertex = new VertexAI({
     project: process.env.GOOGLE_CLOUD_PROJECT!,
     location: process.env.GOOGLE_CLOUD_LOCATION!,
+    googleAuthOptions: {
+      credentials,
+    },
   })
+
   return vertex.getGenerativeModel({
     model: 'gemini-2.5-flash',
     generationConfig: {
