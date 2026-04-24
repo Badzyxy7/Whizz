@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #0a0a0a;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+button {
+  background-color: transparent;
+}
+
+/* Tailwind v4 preflight override — prevents system accent color bleeding into elements */
+*:focus,
+*:focus-visible,
+*:focus-within {
+  outline: none;
+}
+
+/* Force all links to never inherit system/browser background */
+a:any-link {
+  color: inherit;
+  background-color: transparent;
+}
+
