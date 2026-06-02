@@ -22,7 +22,12 @@ export function getVertexClient() {
   })
 }
 
-export function buildGeminiPrompt(documentText: string, selectedModes: string[]) {
+export function buildGeminiPrompt(documentText: string, selectedModes: string[], mcQuestionCount = 10) {
+  const modeDescriptions = selectedModes.map(mode => {
+    const count = mode === 'multiplechoice' ? mcQuestionCount : 10
+    return `${mode}: ${count} questions`
+  }).join(', ')
+
   return `You are a study assistant. Based on the following document content, generate study questions in the requested modes.
 
 Document content:
@@ -30,14 +35,14 @@ Document content:
 ${documentText}
 """
 
-Generate exactly 10 questions for each of the following modes: ${selectedModes.join(', ')}
+Generate the following: ${modeDescriptions}
 
 Return a valid JSON object in this exact format:
 {
   "flashcards": [
     { "front": "term or question", "back": "definition or answer", "type": "term-definition" }
   ],
-  "multiple_choice": [
+  "multiplechoice": [
     { "question": "...", "choices": ["A. ...", "B. ...", "C. ...", "D. ..."], "answer": "A" }
   ],
   "identification": [

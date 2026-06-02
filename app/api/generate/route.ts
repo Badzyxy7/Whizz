@@ -12,39 +12,49 @@ export async function POST(request: Request) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const formData = await request.formData()
-    const file = formData.get('file') as File
+    const fileEntries = formData.getAll('files') as File[]
     const title = formData.get('title') as string
     const modes = JSON.parse(formData.get('modes') as string) as string[]
+    const mcQuestionCount = parseInt(formData.get('mcQuestionCount') as string || '10', 10)
 
-    if (!file || !title || !modes.length) {
+    if (!fileEntries.length || !title || !modes.length) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    console.log('📄 Parsing file:', file.name, file.type)
-
-    const buffer = Buffer.from(await file.arrayBuffer())
-    let text = ''
-
-    if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
-      text = await parsePDF(buffer)
-    } else if (file.name.endsWith('.docx') || file.type.includes('wordprocessingml')) {
-      text = await parseDOCX(buffer)
-    } else {
-      return NextResponse.json({ error: 'Only PDF and DOCX files are supported.' }, { status: 400 })
+    if (fileEntries.length > 3) {
+      return NextResponse.json({ error: 'Maximum 3 files allowed.' }, { status: 400 })
     }
 
-    console.log('✅ Parsed text length:', text.length)
+    console.log('📄 Parsing', fileEntries.length, 'file(s)...')
+
+    let text = ''
+    for (const file of fileEntries) {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      let fileText = ''
+
+      if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
+        fileText = await parsePDF(buffer)
+      } else if (file.name.endsWith('.docx') || file.type.includes('wordprocessingml')) {
+        fileText = await parseDOCX(buffer)
+      } else {
+        return NextResponse.json({ error: 'Only PDF and DOCX files are supported.' }, { status: 400 })
+      }
+
+      console.log(`✅ Parsed "${file.name}": ${fileText.length} chars`)
+      text += '\n\n' + fileText
+    }
 
     if (!text.trim()) {
-      return NextResponse.json({ error: 'Could not extract text from the file. Try a different file.' }, { status: 400 })
+      return NextResponse.json({ error: 'Could not extract text from the files. Try different files.' }, { status: 400 })
     }
 
-    const trimmedText = text.slice(0, 10000)
+    const trimmedText = text.slice(0, 20000)
 
     console.log('🤖 Calling Gemini via Vertex AI...')
+    console.log('   Modes:', modes, '| MC count:', mcQuestionCount)
 
     const model = getVertexClient()
-    const prompt = buildGeminiPrompt(trimmedText, modes)
+    const prompt = buildGeminiPrompt(trimmedText, modes, mcQuestionCount)
     const result = await model.generateContent(prompt)
     const raw = result.response.candidates![0].content.parts[0].text!
 

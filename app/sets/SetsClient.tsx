@@ -218,11 +218,12 @@ export default function SetsClient({ initialSets }: { initialSets: StudySet[] })
 
       {showModal && (
         <CreateSetModal
-          onClose={() => {
-            setShowModal(false)
-            router.refresh()
-          }}
-        />
+  onClose={() => setShowModal(false)}
+  onSuccess={(setId) => {
+    setShowModal(false)
+    router.push(`/sets/${setId}`)
+  }}
+/>
       )}
     </div>
   )
