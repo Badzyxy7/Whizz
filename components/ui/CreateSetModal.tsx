@@ -118,7 +118,7 @@ export default function CreateSetModal({ onClose, onSuccess }: Props) {
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      const res = await fetch('/api/save', {
+      const res = await fetch('/api/save-set', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ setId, questions }),
