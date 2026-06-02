@@ -1,4 +1,4 @@
-export type StudyMode = 'flashcards' | 'multiplechoice' | 'identification' | 'enumeration'
+export type StudyMode = 'flashcards' | 'multiple_choice' | 'identification' | 'enumeration'
 
 export type Profile = {
   id: string

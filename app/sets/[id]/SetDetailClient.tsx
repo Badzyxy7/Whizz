@@ -8,14 +8,14 @@ import type { StudySet, Question } from '@/lib/types'
 
 const MODE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   flashcards:      { bg: 'var(--color-accent-dim)',  color: 'var(--color-accent)',    border: 'var(--color-border-hover)' },
-  multiplechoice: { bg: 'var(--color-accent-dim)',  color: 'var(--color-accent)',    border: 'var(--color-border-hover)' },
+  multiple_choice: { bg: 'var(--color-accent-dim)',  color: 'var(--color-accent)',    border: 'var(--color-border-hover)' },
   identification:  { bg: 'var(--color-surface)',     color: 'var(--color-text-muted)', border: 'var(--color-border)'      },
   enumeration:     { bg: 'var(--color-accent-dim)',  color: 'var(--color-accent)',    border: 'var(--color-border)'       },
 }
 
 const MODE_LABELS: Record<string, string> = {
   flashcards:      'Flashcards',
-  multiplechoice: 'Multiple Choice',
+  multiple_choice: 'Multiple Choice',
   identification:  'Identification',
   enumeration:     'Enumeration',
 }
@@ -344,7 +344,7 @@ function QuestionEditor({ mode, draft, onChange }: { mode: string; draft: any; o
         <Input value={draft.question} onChange={v => onChange({ ...draft, question: v })} placeholder="Question" />
         <Input value={draft.answer} onChange={v => onChange({ ...draft, answer: v })} placeholder="Answer" />
       </>)}
-      {mode === 'multiplechoice' && (<>
+      {mode === 'multiple_choice' && (<>
         <Input value={draft.question} onChange={v => onChange({ ...draft, question: v })} placeholder="Question" />
         {draft.choices?.map((c: string, i: number) => (
           <Input
